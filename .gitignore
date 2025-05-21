@@ -23,5 +23,5 @@ dist-ssr
 *.sln
 *.sw?
 
-# User local files
-.user/*
+# Local API config file
+api/local.config.js
