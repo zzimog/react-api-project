@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import styled from '@emotion/styled';
+import config from './config/local.config';
 
-const API_URL_BASE = 'http://localhost/api/';
+const API_URL_BASE = config.baseUrl;
 
 const Container = styled.div({
   display: 'flex',

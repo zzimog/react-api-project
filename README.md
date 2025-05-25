@@ -4,7 +4,7 @@ Work in progress project, React front-end with PHP API back-end.
 
 ## Configure API
 
-Create file `api/local.config.js`:
+Create file `src/config/local.config.js`:
 
 ```js
 export default {
