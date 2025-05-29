@@ -39,7 +39,6 @@ function get(string $target, callable $callback) {
     $path = $target_t[$__i__];
 
     if ($path[0] === '{') {
-      //sscanf($target, "{%[^:]:%[^}]}", $type, $name);
       $path = trim($path, "{}");
       [$type, $name] = explode(":", $path, 2);
 
