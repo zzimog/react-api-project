@@ -1,6 +1,6 @@
 <?php
 
-($router = new Router("*/debug"))
+$router->mount("*/debug")
 
   ->route("/uri", function () {
     $uri = $_SERVER['REQUEST_URI'];
@@ -16,6 +16,4 @@
     echo "<pre>";
     print_r($router->getRoutes());
     echo "</pre>";
-  })
-
-  ->run();
+  });

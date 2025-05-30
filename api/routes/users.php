@@ -1,6 +1,6 @@
 <?php
 
-(new Router("*/users"))
+$router->mount("*/users")
 
   ->route("/", function () {
     $users = new Users();
@@ -15,6 +15,4 @@
       "id" => $user_id,
       "username" => "some username..."
     ]);
-  })
-
-  ->run();
+  });

@@ -1,7 +1,7 @@
 <?php
 
 class Router {
-  protected string $base;
+  protected string $mount;
   protected array $routes;
 
   public static function uri_tokenize(string $uri) {
@@ -11,8 +11,18 @@ class Router {
   }
 
   public function __construct(?string $base = "") {
-    $this->base = trim($base, "/") . "/";
+    $this->mount($base);
     $this->routes = [];
+  }
+
+  public function mount(string $path) {
+    $this->mount = trim($path, "/") . "/";
+
+    return $this;
+  }
+
+  public function unmount() {
+    return $this->mount("");
   }
 
   public function getRoutes() {
@@ -30,7 +40,7 @@ class Router {
     callable $callback
   ): Router {
     $route = trim($route, "/");
-    $route = $this->base . $route;
+    $route = $this->mount . $route;
 
     $this->routes[] = [
       "route" => $route,
