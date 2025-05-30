@@ -2,7 +2,15 @@
 
 class Users extends APIController {
   public function getAll() {
-    $result = $this->db->query("SELECT * FROM users");
+    $db = $this->db;
+    $result = $db->query("SELECT * FROM users");
+
+    $this->sendResponse($result);
+  }
+
+  public function get(int $id) {
+    $db = $this->db;
+    $result = $db->query("SELECT * FROM users WHERE id=?", ['i', $id]);
 
     $this->sendResponse($result);
   }
