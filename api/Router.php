@@ -66,7 +66,16 @@ class Router {
     $request_uri_tokens = self::uri_tokenize($request_uri);
 
     foreach ($this->routes as $__ROUTE__) {
+      $allowed_methods = $__ROUTE__['methods'];
+
+      if (!in_array($request_method, $allowed_methods)) {
+        if (count($allowed_methods) !== 1 && $allowed_methods[0] === 'ANY') {
+          continue;
+        }
+      }
+
       $route_tokens = self::uri_tokenize($__ROUTE__['route']);
+
       if (count($request_uri_tokens) !== count($route_tokens)) {
         continue;
       }
@@ -93,15 +102,6 @@ class Router {
 
       if (!$match) {
         continue;
-      }
-
-      $allowed_methods = $__ROUTE__['methods'];
-
-      if (!in_array($request_method, $allowed_methods)) {
-        if (count($allowed_methods) !== 1 && $allowed_methods[0] === 'ANY') {
-          $this->onError();
-          return;
-        }
       }
 
       $__ROUTE__['callback']($args);
