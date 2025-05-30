@@ -13,16 +13,19 @@ class APIController {
   }
 
   public function __call($name, $args) {
-    // @todo
+    $this->sendResponse(404);
   }
 
-  public function sendResponse(mixed $body, array|string $headers = []) {
-    if (!is_array($body)) {
-      $body = ["message" => $body];
-    }
+  public function getBody() {
+    return $this->request;
+  }
 
-    $body = json_encode($body, JSON_UNESCAPED_SLASHES);
+  public function sendError(int $code = 404) {
+    http_response_code($code);
+    $this->sendResponse('', "Content-type: text/html");
+  }
 
+  public function sendResponse(mixed $body, array | string $headers = []) {
     header_remove('Set-Cookie');
     header('Content-Type: application/json');
     header('Access-Control-Allow-Origin: *');
@@ -35,6 +38,12 @@ class APIController {
       header($headers);
     }
 
-    die($body);
+    if (is_array($body)) {
+      echo json_encode($body, JSON_UNESCAPED_SLASHES);
+    } else {
+      echo $body;
+    }
+
+    die();
   }
 }
