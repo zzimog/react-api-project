@@ -12,6 +12,10 @@ class Users extends APIController {
     $db = $this->db;
     $result = $db->query("SELECT * FROM users WHERE id=?", ['i', $id]);
 
-    $this->sendResponse($result);
+    if (count($result) === 1) {
+      $this->sendResponse($result);
+    }
+
+    $this->sendError(200, "No record found for id: " . $id);
   }
 }

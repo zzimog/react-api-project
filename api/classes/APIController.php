@@ -18,9 +18,14 @@ class APIController {
     $this->sendResponse(404);
   }
 
-  public function sendError(int $code = 404) {
+  public function sendError(int $code = 404, ?string $error = null) {
     http_response_code($code);
-    $this->sendResponse('', "Content-type: text/html");
+
+    if (!empty($error)) {
+      $body = ["error" => $error];
+    }
+
+    $this->sendResponse($body ?? '', "Content-type: text/html");
   }
 
   public function sendResponse(mixed $body, array | string $headers = []) {
