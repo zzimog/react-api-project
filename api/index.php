@@ -1,4 +1,4 @@
 <?php
 
 require_once "inc/bootstrap.php";
-include "routes/index.php";
+require_once "routes/index.php";
