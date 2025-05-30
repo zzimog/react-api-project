@@ -2,6 +2,7 @@
 
 class APIController {
   protected $request;
+  protected $db;
 
   public function __construct() {
     header('Accept: application/json');
@@ -10,14 +11,11 @@ class APIController {
     $request = json_decode($request, JSON_OBJECT_AS_ARRAY);
 
     $this->request = $request;
+    $this->db = new Database();
   }
 
   public function __call($name, $args) {
     $this->sendResponse(404);
-  }
-
-  public function getBody() {
-    return $this->request;
   }
 
   public function sendError(int $code = 404) {

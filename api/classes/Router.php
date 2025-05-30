@@ -1,16 +1,7 @@
 <?php
 
 class Router {
-  const METHODS = [
-    'ANY',
-    'GET',
-    'POST',
-    'PUT',
-    'PATCH',
-    'DELETE',
-    'OPTIONS'
-  ];
-
+  protected string $base;
   protected array $routes;
 
   public static function uri_tokenize(string $uri) {
@@ -19,7 +10,8 @@ class Router {
     return preg_split('/\//', $parsed, -1, PREG_SPLIT_NO_EMPTY);
   }
 
-  public function __construct() {
+  public function __construct(?string $base = "") {
+    $this->base = trim($base, "/") . "/";
     $this->routes = [];
   }
 
@@ -35,19 +27,13 @@ class Router {
 
   public function route(
     string $route,
-    array | string $methods,
     callable $callback
   ): Router {
-
-    if (!is_array($methods)) {
-      $methods = [$methods];
-    }
-
-    array_map('strtoupper', $methods);
+    $route = trim($route, "/");
+    $route = $this->base . $route;
 
     $this->routes[] = [
       "route" => $route,
-      "methods" => $methods,
       "callback" => $callback
     ];
 
@@ -55,25 +41,10 @@ class Router {
   }
 
   public function run() {
-    $request_method = $_SERVER['REQUEST_METHOD'];
-
-    if (!in_array($request_method, self::METHODS)) {
-      $this->onError();
-      return;
-    }
-
     $request_uri = $_SERVER['REQUEST_URI'];
     $request_uri_tokens = self::uri_tokenize($request_uri);
 
     foreach ($this->routes as $__ROUTE__) {
-      $allowed_methods = $__ROUTE__['methods'];
-
-      if (!in_array($request_method, $allowed_methods)) {
-        if (count($allowed_methods) !== 1 && $allowed_methods[0] === 'ANY') {
-          continue;
-        }
-      }
-
       $route_tokens = self::uri_tokenize($__ROUTE__['route']);
 
       if (count($request_uri_tokens) !== count($route_tokens)) {
@@ -104,7 +75,8 @@ class Router {
         continue;
       }
 
-      $__ROUTE__['callback']($args);
+      $callback = $__ROUTE__['callback'];
+      $callback($args);
       return;
     }
 
