@@ -25,11 +25,17 @@ class Database {
   public function query(string $query, ?array $params = []) {
     try {
       $stmt = $this->execute($query, $params);
-
       $result = $stmt->get_result();
-      $data = $result->fetch_all(MYSQLI_ASSOC);
 
-      return $data;
+      if (is_bool($result) || is_numeric($result)) {
+        return [
+          "affectedRows" => $this->db->affected_rows,
+          "error" => $result,
+          "errno" => $stmt->errno
+        ];
+      }
+
+      return $result->fetch_all(MYSQLI_ASSOC);
     } catch (Exception $e) {
       throw new Exception($e->getMessage());
     }
@@ -45,7 +51,11 @@ class Database {
       }
 
       if ($params) {
-        $stmt->bind_param($params[0], $params[1]);
+        if (is_array($params[1])) {
+          $stmt->bind_param($params[0], ...$params[1]);
+        } else {
+          $stmt->bind_param($params[0], $params[1]);
+        }
       }
 
       $stmt->execute();

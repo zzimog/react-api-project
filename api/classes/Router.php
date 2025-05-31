@@ -85,8 +85,10 @@ class Router {
         continue;
       }
 
+      $method = $_SERVER['REQUEST_METHOD'];
       $callback = $__ROUTE__['callback'];
-      $callback($args);
+      $callback($method, $args);
+
       return;
     }
 

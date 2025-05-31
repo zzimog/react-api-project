@@ -5,17 +5,29 @@ class APIController {
   protected $db;
 
   public function __construct() {
-    header('Accept: application/json');
+    header_remove('Set-Cookie');
+    header('Access-Control-Allow-Origin: *');
+
+    if (
+      isset($_SERVER['CONTENT_TYPE']) &&
+      $_SERVER['CONTENT_TYPE'] !== 'application/json'
+    ) {
+      $this->sendError(415/*, "Only application/json type is supported."*/);
+    }
 
     $request = file_get_contents('php://input');
     $request = json_decode($request, JSON_OBJECT_AS_ARRAY);
 
-    $this->request = $request;
+    $this->request = $request ?? [];
     $this->db = new Database();
   }
 
   public function __call($name, $args) {
     $this->sendResponse(404);
+  }
+
+  public function query(string $query, ?array $params = []) {
+    return $this->db->query($query, $params);
   }
 
   public function sendError(int $code = 404, ?string $error = null) {
@@ -29,10 +41,6 @@ class APIController {
   }
 
   public function sendResponse(mixed $body, array | string $headers = []) {
-    header_remove('Set-Cookie');
-    header('Content-Type: application/json');
-    header('Access-Control-Allow-Origin: *');
-
     if (is_array($headers)) {
       foreach ($headers as $header) {
         header($header);
@@ -42,11 +50,11 @@ class APIController {
     }
 
     if (is_array($body)) {
-      echo json_encode($body, JSON_UNESCAPED_SLASHES);
-    } else {
-      echo $body;
+      header('Content-Type: application/json');
+
+      $body = json_encode($body, JSON_UNESCAPED_SLASHES);
     }
 
-    die();
+    die($body);
   }
 }
