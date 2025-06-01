@@ -1,8 +1,5 @@
 import { useState } from 'react';
 import styled from '@emotion/styled';
-import config from './config/local.config';
-
-const API_URL_BASE = config.baseUrl;
 
 const Container = styled.div({
   display: 'flex',
@@ -29,12 +26,13 @@ const Container = styled.div({
   },
 });
 
-const ApiCaller = () => {
+const ApiCaller = ({ baseUrl }: { baseUrl?: string }) => {
   const [api, setApi] = useState<string>('');
   const [json, setJson] = useState<string>('{}');
 
   async function handleClick() {
-    const resp = await fetch(API_URL_BASE + api);
+    const url = baseUrl || '';
+    const resp = await fetch(url + api);
     const json = await resp.json();
 
     console.log(resp);
@@ -45,7 +43,7 @@ const ApiCaller = () => {
     <Container>
       <div>
         <div className="toolbar">
-          {API_URL_BASE}
+          {baseUrl || '/'}
           <input
             type="text"
             value={api}

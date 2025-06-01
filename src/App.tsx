@@ -1,7 +1,7 @@
-import ApiCaller from './ApiCaller';
+import User from './entities/User';
 
 function App() {
-  return <ApiCaller />;
+  return <User.Zoom />;
 }
 
 export default App;
