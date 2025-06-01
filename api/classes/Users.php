@@ -18,7 +18,7 @@ class Users extends APIController {
     EOD, ['i', $id]);
 
     if (count($result) === 1) {
-      $this->sendResponse($result);
+      $this->sendResponse($result[0]);
     }
 
     $this->sendError(200, "No user found with id: " . $id);
