@@ -26,7 +26,9 @@
     /* Aliases */
     "paths": {
       "@/*": ["./src/*"],
-      "@ui/*": ["./src/ui/*"],
+      "@ui": ["./src/ui"],
+      "@ui/*?": ["./src/ui/*"],
+      "@utils": ["./src/utils"],
       "@utils/*": ["./src/utils/*"]
     }
   },

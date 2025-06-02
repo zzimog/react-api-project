@@ -1,7 +1,8 @@
 import type { PropsWithChildren } from 'react';
-import styled from '@utils/styled';
+import { createPortal } from 'react-dom';
+import styled from '../styled';
 
-type ModalProps = {
+export type ModalProps = {
   open?: boolean;
   onClose?: () => void;
 } & PropsWithChildren;
@@ -16,11 +17,15 @@ const ModalCinema = styled.div({
 });
 
 const ModalRoot = styled.div({
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
   padding: '16px',
   background: '#fff',
+  transform: 'translate(-50%, -50%)',
 });
 
-const Modal = (props: ModalProps) => {
+export const Modal = (props: ModalProps) => {
   const { open, children, onClose } = props;
 
   function handleClose() {
@@ -33,10 +38,12 @@ const Modal = (props: ModalProps) => {
     return;
   }
 
-  return (
-    <ModalCinema onClick={handleClose}>
+  return createPortal(
+    <>
+      <ModalCinema onClick={handleClose} />
       <ModalRoot>{children}</ModalRoot>
-    </ModalCinema>
+    </>,
+    document.body
   );
 };
 

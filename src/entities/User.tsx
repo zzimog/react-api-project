@@ -1,29 +1,12 @@
 import { useState } from 'react';
-import Table from '@ui/common/Table';
-import Modal from '@ui/common/Modal';
-import styled from '@utils/styled';
-import useQuery from '@utils/useQuery';
+import { styled, Table, Modal, Button, Icon, Loader } from '@ui';
+import useQuery from '@/utils/useQuery';
+import FormField from '@/ui/form/FormField';
 
 const Form = styled.div({
   display: 'flex',
   flexDirection: 'column',
   gap: '16px',
-});
-
-const FormField = styled.div({
-  width: '100%',
-
-  ['label']: {
-    display: 'block',
-    padding: '0 4px',
-    marginBottom: '4px',
-  },
-
-  ['input']: {
-    padding: '8px',
-    border: '1px solid gray',
-    borderRadius: '4px',
-  },
 });
 
 export type UserModel = {
@@ -36,45 +19,29 @@ export type UserModel = {
 export const Entity = (props: { id: number }) => {
   const { id } = props;
   const { data, isPending } = useQuery<UserModel>(`/users/${id}`, {
-    delay: 1000,
+    delay: 3000,
   });
 
   if (isPending) {
-    return (
-      <div>
-        <span>Loading...</span>
-      </div>
-    );
+    return <Loader />;
   }
 
   return (
     <Form>
-      <FormField>
-        <label htmlFor="id">ID</label>
-        <input id="id" type="text" defaultValue={id} disabled />
-      </FormField>
-      <FormField>
-        <label htmlFor="username">Username</label>
-        <input
-          id="username"
-          type="text"
-          defaultValue={data?.username}
-          autoComplete="off"
-        />
-      </FormField>
-      <FormField>
-        <label htmlFor="hash">Hash</label>
-        <input id="hash" type="text" defaultValue={data?.hash} />
-      </FormField>
-      <FormField>
-        <label htmlFor="email">Email</label>
-        <input
-          id="email"
-          type="text"
-          defaultValue={data?.email}
-          autoComplete="off"
-        />
-      </FormField>
+      <FormField name="id" label="ID" value={id} props={{ disabled: true }} />
+      <FormField
+        name="username"
+        label="Username"
+        value={data?.username}
+        props={{ autoComplete: 'off' }}
+      />
+      <FormField name="hash" label="Hash" value={data?.hash} />
+      <FormField
+        name="email"
+        label="Email"
+        value={data?.email}
+        props={{ autoComplete: 'off' }}
+      />
     </Form>
   );
 };
@@ -84,14 +51,14 @@ export const Zoom = () => {
   const { data, dataLastUpdate, isPending, refetch } = useQuery<UserModel[]>(
     '/users',
     {
-      delay: 1000,
+      delay: 3000,
     }
   );
 
   if (isPending) {
     return (
-      <div style={{ padding: '16px' }}>
-        <span>Loading data...</span>
+      <div style={{ padding: '32px' }}>
+        <Loader />
       </div>
     );
   }
@@ -112,11 +79,22 @@ export const Zoom = () => {
           marginBottom: '8px',
         }}
       >
-        <button onClick={refetch}>Refresh</button>
-        <span>Last update: {dataLastUpdate.toString()}</span>
+        <Button onClick={refetch}>
+          <Icon name="refresh" />
+          Refresh
+        </Button>
+
+        <Button
+          style={{ marginLeft: 'auto' }}
+          onClick={() => alert('to be implemented')}
+        >
+          <Icon name="person_add" />
+          New
+        </Button>
       </div>
 
       <Table
+        style={{ marginBottom: '8px' }}
         data={{
           headers: ['ID', 'Username', 'Hash', 'Email'],
           rows: data!.map((row) => ({
@@ -135,6 +113,8 @@ export const Zoom = () => {
           })),
         }}
       />
+
+      <span>Last update: {dataLastUpdate.toLocaleString()}</span>
     </div>
   );
 };

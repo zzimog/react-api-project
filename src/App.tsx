@@ -1,7 +1,11 @@
 import User from './entities/User';
 
 function App() {
-  return <User.Zoom />;
+  return (
+    <>
+      <User.Zoom />
+    </>
+  );
 }
 
 export default App;

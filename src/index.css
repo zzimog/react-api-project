@@ -1,3 +1,9 @@
+:root {
+  --color-primary: #444cf7;
+
+  font-family: 'IBM Plex Sans Variable', sans-serif;
+}
+
 *,
 *::before,
 *::after {
@@ -8,7 +14,6 @@
 
 body {
   min-height: 100vh;
-  font-family: sans-serif;
 }
 
 input,
