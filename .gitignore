@@ -24,4 +24,4 @@ dist-ssr
 *.sw?
 
 # Local API config file
-local.config.js
+local.config.*
