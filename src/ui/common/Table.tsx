@@ -13,7 +13,6 @@ export type TableProps = {
   };
 } & TableHTMLAttributes<HTMLTableElement>;
 
-// #444CF7
 const TableRoot = styled.div({
   paddingBottom: '16px',
   borderRadius: '8px',
@@ -26,7 +25,7 @@ const TableRoot = styled.div({
     overflow: 'hidden',
 
     [`tr.odd`]: {
-      background: 'rgb(240, 240, 240)',
+      background: '#f0f0f0',
     },
 
     [`td, th`]: {
