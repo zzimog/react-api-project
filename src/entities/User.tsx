@@ -1,9 +1,10 @@
+import type { ChangeEvent, FormEvent } from 'react';
 import { useState } from 'react';
 import { styled, Table, Modal, Button, Icon, Loader } from '@ui';
 import useQuery from '@/utils/useQuery';
 import FormField from '@/ui/form/FormField';
 
-const Form = styled.div({
+const Form = styled.form({
   display: 'flex',
   flexDirection: 'column',
   gap: '16px',
@@ -16,42 +17,84 @@ export type UserModel = {
   email: string;
 };
 
-export const Entity = (props: { id: number }) => {
-  const { id } = props;
+export type UserEntityProps = {
+  id?: number;
+  mode: 'new' | 'view' | 'edit';
+};
+
+export const Entity = (props: UserEntityProps) => {
+  const { id, mode: initMode } = props;
+  const [mode, setMode] = useState(initMode);
   const { data, isPending } = useQuery<UserModel>(`/users/${id}`, {
-    delay: 3000,
+    delay: 0,
   });
+
+  const formData: Record<string, string | number | boolean> = {};
+
+  function handleSubmit(evt: FormEvent<HTMLFormElement>) {
+    evt.preventDefault();
+
+    fetch(`http://localhost/api/users/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formData),
+    })
+      .then((resp) => resp.json())
+      .then((json) => console.log(json))
+      .catch((err) => alert(err));
+  }
+
+  function handleChange(evt: ChangeEvent<HTMLInputElement>) {
+    const { name, value } = evt.target;
+    formData[name] = value;
+  }
 
   if (isPending) {
     return <Loader />;
   }
 
   return (
-    <Form>
-      <FormField name="id" label="ID" value={id} props={{ disabled: true }} />
+    <Form onSubmit={handleSubmit}>
+      <FormField name="mode" label="Mode" value={mode} disabled />
+      <FormField name="id" label="ID" value={id} disabled />
       <FormField
         name="username"
         label="Username"
-        value={data?.username}
-        props={{ autoComplete: 'off' }}
+        defaultValue={data?.username || ''}
+        autoComplete="off"
+        disabled={mode === 'view'}
+        onChange={handleChange}
       />
-      <FormField name="hash" label="Hash" value={data?.hash} />
+      <FormField
+        name="hash"
+        label="Hash"
+        defaultValue={data?.hash || ''}
+        disabled={mode === 'view'}
+        onChange={handleChange}
+      />
       <FormField
         name="email"
         label="Email"
-        value={data?.email}
-        props={{ autoComplete: 'off' }}
+        defaultValue={data?.email || ''}
+        autoComplete="off"
+        disabled={mode === 'view'}
+        onChange={handleChange}
       />
+      <Button type="submit">Save</Button>
+      <Button type="button" onClick={() => setMode('edit')}>
+        Edit
+      </Button>
     </Form>
   );
 };
 
 export const Zoom = () => {
-  const [index, setIndex] = useState(-1);
+  const [entity, setEntity] = useState<UserEntityProps | null>(null);
+
   const { data, dataLastUpdate, isPending, refetch } = useQuery<UserModel[]>(
     '/users',
     {
-      delay: 3000,
+      delay: 0,
     }
   );
 
@@ -65,9 +108,9 @@ export const Zoom = () => {
 
   return (
     <div style={{ padding: '16px' }}>
-      {index > -1 && (
-        <Modal open={true} onClose={() => setIndex(-1)}>
-          <Entity id={index} />
+      {entity?.mode && (
+        <Modal open={true} onClose={() => setEntity(null)}>
+          <Entity id={entity.id} mode={entity.mode} />
         </Modal>
       )}
 
@@ -86,7 +129,11 @@ export const Zoom = () => {
 
         <Button
           style={{ marginLeft: 'auto' }}
-          onClick={() => alert('to be implemented')}
+          onClick={() =>
+            setEntity({
+              mode: 'new',
+            })
+          }
         >
           <Icon name="person_add" />
           New
@@ -104,7 +151,10 @@ export const Zoom = () => {
                 href="#"
                 onClick={(e) => {
                   e.preventDefault();
-                  setIndex(row['id']);
+                  setEntity({
+                    id: row['id'],
+                    mode: 'view',
+                  });
                 }}
               >
                 {row['id']}
