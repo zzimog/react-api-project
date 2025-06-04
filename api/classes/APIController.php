@@ -7,6 +7,8 @@ class APIController {
   public function __construct() {
     header_remove('Set-Cookie');
     header('Access-Control-Allow-Origin: *');
+    header('Access-Control-Allow-Headers: *');
+    header('Access-Control-Allow-Methods: *');
 
     if (
       isset($_SERVER['CONTENT_TYPE']) &&
