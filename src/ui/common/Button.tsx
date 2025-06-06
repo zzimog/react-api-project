@@ -19,15 +19,17 @@ const ButtonHoverEffect = styled.div({
 
 const ButtonRoot = styled.button({
   '--hoverEffectSize': 0,
+
   position: 'relative',
   display: 'flex',
   alignItems: 'center',
   gap: '4px',
   width: 'fit-content',
-  padding: '8px 16px',
+  padding: '10px 16px',
   border: 0,
   borderRadius: '4px',
   cursor: 'pointer',
+  fontSize: '14px',
   color: '#fff',
   backgroundColor: 'var(--color-primary)',
   overflow: 'hidden',

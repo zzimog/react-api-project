@@ -1,14 +1,10 @@
 import type { ChangeEvent, FormEvent } from 'react';
 import { useState } from 'react';
-import { styled, Table, Modal, Button, Icon, Loader } from '@ui';
+import { Table, Modal, Button, Icon, Loader } from '@ui';
 import useQuery from '@/utils/useQuery';
-import FormField from '@/ui/form/FormField';
-
-const Form = styled.form({
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '16px',
-});
+import Form from '@/ui/form/Form';
+import useFetch from '@/utils/useFetch';
+import capitalize from '@/utils/capitalize';
 
 export type UserModel = {
   id: number;
@@ -18,83 +14,136 @@ export type UserModel = {
 };
 
 export type UserEntityProps = {
-  id?: number;
-  mode: 'new' | 'view' | 'edit';
+  id?: string | number;
+  mode?: 'new' | 'view' | 'edit';
+  onSuccess?: () => void;
+  onError?: () => void;
 };
 
 export const Entity = (props: UserEntityProps) => {
-  const { id, mode: initMode } = props;
-  const [mode, setMode] = useState(initMode);
-  const { data, isPending } = useQuery<UserModel>(`/users/${id}`, {
-    delay: 0,
+  const { id, mode: initMode, onSuccess, onError } = props;
+  const [mode, setMode] = useState(initMode || (id ? 'view' : 'new'));
+
+  const { data, isIdle, isPending } = useQuery<UserModel>(`/users/${id}`, {
+    delay: 1000,
+    enabled: !!id,
   });
 
-  const formData: Record<string, string | number | boolean> = {};
+  const api = useFetch({
+    url: 'users' + (id ? `/${id}` : ''),
+    onSuccess,
+    onError: (err) => {
+      alert(err);
+
+      if (onError) {
+        onError();
+      }
+    },
+  });
 
   function handleSubmit(evt: FormEvent<HTMLFormElement>) {
     evt.preventDefault();
 
-    fetch(`http://localhost/api/users/${id}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(formData),
-    })
-      .then((resp) => resp.json())
-      .then((json) => console.log(json))
-      .catch((err) => alert(err));
+    if (!Object.keys(formData).length) {
+      return;
+    }
+
+    if (mode === 'edit') {
+      api.patch(formData);
+    } else if (mode === 'new') {
+      api.put(formData);
+    }
   }
 
-  function handleChange(evt: ChangeEvent<HTMLInputElement>) {
-    const { name, value } = evt.target;
-    formData[name] = value;
+  function handleDelete() {
+    api.delete();
   }
 
-  if (isPending) {
+  if ((id && isIdle) || isPending) {
     return <Loader />;
   }
 
+  const formData: Record<string, string | number | boolean> = {};
+  const formFieldProps = {
+    disabled: mode === 'view',
+    onChange(evt: ChangeEvent<HTMLInputElement>) {
+      const { name, value } = evt.target;
+      formData[name] = value;
+    },
+  };
+
   return (
     <Form onSubmit={handleSubmit}>
-      <FormField name="mode" label="Mode" value={mode} disabled />
-      <FormField name="id" label="ID" value={id} disabled />
-      <FormField
+      <Form.Header title={`${capitalize(mode)} user`} />
+
+      {id && <Form.Field name="id" label="ID" defaultValue={id} disabled />}
+      <Form.Field
         name="username"
         label="Username"
         defaultValue={data?.username || ''}
         autoComplete="off"
-        disabled={mode === 'view'}
-        onChange={handleChange}
+        required
+        {...formFieldProps}
       />
-      <FormField
-        name="hash"
-        label="Hash"
-        defaultValue={data?.hash || ''}
-        disabled={mode === 'view'}
-        onChange={handleChange}
+      <Form.Field
+        name="password"
+        label="Password"
+        help="Must be at least 8 characters"
+        type="password"
+        autoComplete="new-password"
+        required
+        {...formFieldProps}
       />
-      <FormField
+      <Form.Field
+        name="passwordConfirm"
+        label="Confirm password"
+        type="password"
+        autoComplete="new-password"
+        required
+        {...formFieldProps}
+      />
+      <Form.Field
         name="email"
         label="Email"
+        type="email"
         defaultValue={data?.email || ''}
         autoComplete="off"
-        disabled={mode === 'view'}
-        onChange={handleChange}
+        pattern="/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/"
+        placeholder="ipsum@dolor.sit"
+        {...formFieldProps}
       />
-      <Button type="submit">Save</Button>
-      <Button type="button" onClick={() => setMode('edit')}>
-        Edit
-      </Button>
+
+      <Form.Actions>
+        {mode === 'edit' && (
+          <Button
+            type="button"
+            style={{ marginRight: 'auto' }}
+            onClick={handleDelete}
+          >
+            Delete
+          </Button>
+        )}
+
+        {mode === 'new' || mode === 'edit' ? (
+          <Button type="submit">Save</Button>
+        ) : (
+          <Button type="button" onClick={() => setMode('edit')}>
+            Edit
+          </Button>
+        )}
+      </Form.Actions>
     </Form>
   );
 };
 
 export const Zoom = () => {
-  const [entity, setEntity] = useState<UserEntityProps | null>(null);
+  const [entity, setEntity] = useState<UserEntityProps>();
 
-  const { data, dataLastUpdate, isPending, refetch } = useQuery<UserModel[]>(
+  const { data, dataUpdatedAt, isPending, refetch } = useQuery<UserModel[]>(
     '/users',
     {
-      delay: 0,
+      delay: 1000,
+      placeholder: [],
     }
   );
 
@@ -109,7 +158,7 @@ export const Zoom = () => {
   return (
     <div style={{ padding: '16px' }}>
       {entity?.mode && (
-        <Modal open={true} onClose={() => setEntity(null)}>
+        <Modal open={true} width="400px" onClose={() => setEntity(undefined)}>
           <Entity id={entity.id} mode={entity.mode} />
         </Modal>
       )}
@@ -164,7 +213,7 @@ export const Zoom = () => {
         }}
       />
 
-      <span>Last update: {dataLastUpdate.toLocaleString()}</span>
+      <span>Last update: {dataUpdatedAt?.toLocaleString()}</span>
     </div>
   );
 };
