@@ -1,9 +1,23 @@
 <?php
 
 class Users extends APIController {
+  private array $fields;
+
+  public function __construct() {
+    parent::init();
+
+    $this->fields = [
+      "id",
+      "username",
+      "hash",
+      "email"
+    ];
+  }
+
   public function getAll() {
+    $fields = implode(',', $this->fields);
     $result = $this->query(<<<EOD
-      SELECT id, username, hash, email
+      SELECT $fields
       FROM users
     EOD);
 
@@ -11,8 +25,9 @@ class Users extends APIController {
   }
 
   public function get(int $id) {
+    $fields = implode(',', $this->fields);
     $result = $this->query(<<<EOD
-      SELECT username, hash, email
+      SELECT $fields
       FROM users
       WHERE id=?
     EOD, ['i', $id]);
@@ -21,7 +36,7 @@ class Users extends APIController {
       $this->sendResponse($result[0]);
     }
 
-    $this->sendError(200, "No user found with id: " . $id);
+    $this->sendError(404, "No user found with id: " . $id);
   }
 
   public function put() {

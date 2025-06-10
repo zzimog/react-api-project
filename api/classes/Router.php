@@ -29,12 +29,6 @@ class Router {
     return $this->routes;
   }
 
-  public function onError() {
-    http_response_code(404);
-    header('Content-type: text/html');
-    die();
-  }
-
   public function route(
     string $route,
     callable $callback
@@ -92,7 +86,6 @@ class Router {
       return;
     }
 
-    $this->onError();
-    return;
+    throw new Error("Path not found.", 404);
   }
 }

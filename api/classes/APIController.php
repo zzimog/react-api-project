@@ -1,10 +1,14 @@
 <?php
 
 class APIController {
-  protected $request;
-  protected $db;
+  protected mixed $request;
+  protected object $db;
 
   public function __construct() {
+    $this->init();
+  }
+
+  protected final function init() {
     header_remove('Set-Cookie');
     header('Access-Control-Allow-Origin: *');
     header('Access-Control-Allow-Headers: *');
@@ -24,25 +28,30 @@ class APIController {
     $this->db = new Database();
   }
 
-  public function __call($name, $args) {
-    $this->sendResponse(404);
+  public final function __call($name, $args) {
+    $this->sendError(500);
   }
 
-  public function query(string $query, ?array $params = []) {
+  protected final function query(string $query, ?array $params = []) {
     return $this->db->query($query, $params);
   }
 
-  public function sendError(int $code = 404, ?string $error = null) {
+  public final function sendError(int $code = 404, ?string $message = null) {
     http_response_code($code);
 
-    if (!empty($error)) {
-      $body = ["error" => $error];
+    if (isset($message)) {
+      $body = [
+        "error" => [
+          "code" => $code,
+          "message" => $message
+        ]
+      ];
     }
 
-    $this->sendResponse($body ?? '', "Content-type: text/html");
+    $this->sendResponse($body ?? null);
   }
 
-  public function sendResponse(mixed $body, array | string $headers = []) {
+  public final function sendResponse(array | null $body, array | string $headers = []) {
     if (is_array($headers)) {
       foreach ($headers as $header) {
         header($header);
@@ -52,8 +61,7 @@ class APIController {
     }
 
     if (is_array($body)) {
-      header('Content-Type: application/json');
-
+      header('Content-Type: application/json; charset=utf-8');
       $body = json_encode($body, JSON_UNESCAPED_SLASHES);
     }
 

@@ -2,18 +2,23 @@
 
 $router->mount("*/debug")
 
-  ->route("/uri", function () {
+  ->route("/request", function () {
     $uri = $_SERVER['REQUEST_URI'];
     $tokens = Router::uri_tokenize($uri);
-    $controller = new APIController();
 
-    $controller->sendResponse([
+    $api = new APIController();
+    $api->sendResponse([
+      "method" => $_SERVER['REQUEST_METHOD'],
+      "uri" => $uri,
       "tokens" => $tokens
     ]);
   })
 
   ->route("/routes", function () use ($router) {
-    echo "<pre>";
-    print_r($router->getRoutes());
-    echo "</pre>";
+    $routes = array_map(function ($route) {
+      return $route['route'];
+    }, $router->getRoutes());
+
+    $api = new APIController();
+    $api->sendResponse($routes);
   });
