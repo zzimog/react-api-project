@@ -1,4 +1,5 @@
 <IfModule mod_rewrite.c>
   RewriteEngine On
-  RewriteRule ^([^?]*)/?$ index.php [nc,qsa]
+  RewriteCond %{REQUEST_URI} !test/.*\.php$ [NC]
+  RewriteRule ^(.*)$ index.php [nc,qsa]
 </IfModule>

@@ -14,7 +14,7 @@ export type TableProps = {
 } & TableHTMLAttributes<HTMLTableElement>;
 
 const TableRoot = styled.div({
-  paddingBottom: '16px',
+  paddingBottom: '8px',
   borderRadius: '8px',
   background: '#fff',
   boxShadow: '5px 5px 100px rgba(68, 77, 247, 0.2)',
@@ -22,6 +22,7 @@ const TableRoot = styled.div({
   [`table`]: {
     width: '100%',
     borderCollapse: 'collapse',
+    borderBottom: '1px solid #f0f0f0',
     overflow: 'hidden',
 
     [`tr.odd`]: {
@@ -70,13 +71,17 @@ export const Table = (props: TableProps) => {
         )}
 
         <tbody>
-          {data.rows.map((row, index) => {
-            const cls = (index + 1) % 2 ? 'odd' : 'even';
+          {!data.rows.length ? (
+            <tr>
+              <td colSpan={data.headers?.length || 1}>No data.</td>
+            </tr>
+          ) : (
+            data.rows.map((row, index) => {
+              const cls = (index + 1) % 2 ? 'odd' : 'even';
 
-            return (
-              <tr key={index} className={cls}>
-                {Object.keys(row).map((key, index, { length }) => {
-                  return (
+              return (
+                <tr key={index} className={cls}>
+                  {Object.keys(row).map((key, index, { length }) => (
                     <td
                       key={index}
                       className={clsx({
@@ -86,11 +91,11 @@ export const Table = (props: TableProps) => {
                     >
                       {row[key]}
                     </td>
-                  );
-                })}
-              </tr>
-            );
-          })}
+                  ))}
+                </tr>
+              );
+            })
+          )}
         </tbody>
       </table>
     </TableRoot>

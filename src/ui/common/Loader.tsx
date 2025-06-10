@@ -30,7 +30,7 @@ const LoaderRoot = styled.div({
   position: 'relative',
   width: `${SIZE}px`,
   height: `${SIZE}px`,
-  margin: '0 auto',
+  margin: '32px auto',
 
   [`.circle`]: {
     position: 'absolute',

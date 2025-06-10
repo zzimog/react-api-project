@@ -4,20 +4,24 @@ import { useEffect, useState } from 'react';
 import config from '@/config/local.config';
 const API_BASE_URL = config.baseUrl;
 
-type QueryState<T> = {
+export type QueryState<T> = {
+  fetchState: 'idle' | 'pending' | 'success' | 'error';
   data?: T;
-  fetchState: 'pending' | 'success' | 'error';
+  dataUpdatedAt?: Date;
 };
 
-type QueryOptions = {
+export type QueryOptions<T> = {
+  enabled?: boolean;
   delay?: number;
+  placeholder?: T;
 };
 
-function useQuery<T>(url: string, options: QueryOptions) {
-  const [lastUpdate, setLastUpdate] = useState(new Date());
+export function useQuery<T>(url: string, options: QueryOptions<T>) {
+  const [refetchTrigger, setRefetchTrigger] = useState(new Date());
   const [state, setState] = useState<QueryState<T>>({
-    data: undefined,
-    fetchState: 'pending',
+    fetchState: 'idle',
+    data: options.placeholder,
+    dataUpdatedAt: undefined,
   });
 
   /**
@@ -32,12 +36,16 @@ function useQuery<T>(url: string, options: QueryOptions) {
   useEffect(() => {
     const abortController = new AbortController();
 
+    if (options.enabled === false) {
+      return;
+    }
+
     setState((prev) => ({
       ...prev,
       fetchState: 'pending',
     }));
 
-    setTimeout(() => {
+    const timeout = setTimeout(() => {
       fetch(API_BASE_URL + url, {
         signal: abortController.signal,
       })
@@ -54,6 +62,7 @@ function useQuery<T>(url: string, options: QueryOptions) {
               ...prev,
               fetchState: 'success',
               data: json,
+              dataUpdatedAt: new Date(),
             }));
           }
         })
@@ -73,20 +82,22 @@ function useQuery<T>(url: string, options: QueryOptions) {
 
     return () => {
       abortController.abort(`[${url}] useEffect clean up`);
+      clearTimeout(timeout);
     };
-  }, [url, options.delay, lastUpdate]);
+  }, [url, options.enabled, options.delay, refetchTrigger]);
 
   function refetch() {
-    setLastUpdate(new Date());
+    setRefetchTrigger(new Date());
   }
 
   return {
     state: state.fetchState,
+    isIdle: state.fetchState === 'idle',
     isPending: state.fetchState === 'pending',
     isSuccess: state.fetchState === 'success',
     isError: state.fetchState === 'error',
     data: state.data,
-    dataLastUpdate: lastUpdate,
+    dataUpdatedAt: state.dataUpdatedAt,
     refetch,
   };
 }

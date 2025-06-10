@@ -4,6 +4,8 @@ import styled from '../styled';
 
 export type ModalProps = {
   open?: boolean;
+  width?: string;
+  height?: string;
   onClose?: () => void;
 } & PropsWithChildren;
 
@@ -13,20 +15,22 @@ const ModalCinema = styled.div({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
-  background: 'rgba(0, 0, 0, 0.5)',
+  background: 'rgba(152, 164, 174, 0.5)',
 });
 
 const ModalRoot = styled.div({
   position: 'absolute',
   top: '50%',
   left: '50%',
-  padding: '16px',
+  maxWidth: '100vw',
   background: '#fff',
   transform: 'translate(-50%, -50%)',
+  borderRadius: '8px',
+  overflow: 'hidden',
 });
 
 export const Modal = (props: ModalProps) => {
-  const { open, children, onClose } = props;
+  const { open, width, height, children, onClose } = props;
 
   function handleClose() {
     if (onClose) {
@@ -41,7 +45,14 @@ export const Modal = (props: ModalProps) => {
   return createPortal(
     <>
       <ModalCinema onClick={handleClose} />
-      <ModalRoot>{children}</ModalRoot>
+      <ModalRoot
+        style={{
+          width,
+          height,
+        }}
+      >
+        {children}
+      </ModalRoot>
     </>,
     document.body
   );
