@@ -36,6 +36,16 @@ class APIController {
     return $this->db->query($query, $params);
   }
 
+  public final function options(array $methods = []) {
+    $methods = array_map("strtoupper", $methods);
+    $methods = implode(',', $methods);
+
+    header("Allow: $methods");
+    header("Allow-Types: application/json");
+
+    $this->sendResponse([]);
+  }
+
   public final function sendError(int $code = 404, ?string $message = null) {
     http_response_code($code);
 

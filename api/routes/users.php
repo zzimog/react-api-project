@@ -7,10 +7,7 @@ $router->mount("*/users")
 
     switch ($method) {
       case 'OPTIONS':
-        header("Allow: OPTIONS,GET,PUT");
-        header("Allow-Types: application/json");
-        header("Content-Type: application/json");
-        die();
+        $users->options(["OPTIONS", "GET", "PUT"]);
 
       case 'GET':
         $users->getAll();
@@ -29,10 +26,7 @@ $router->mount("*/users")
 
     switch ($method) {
       case 'OPTIONS':
-        header("Allow: OPTIONS,GET,PATCH,DELETE");
-        header("Allow-Types: application/json");
-        header("Content-Type: application/json");
-        die();
+        $users->options(["OPTIONS", "GET", "PATCH", "DELETE"]);
 
       case 'GET':
         $users->get($user_id);
