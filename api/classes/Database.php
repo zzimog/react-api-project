@@ -61,7 +61,7 @@ final class Database {
           $stmt->bind_param($params[0], ...$params[1]);
         } else {
           $values = array_slice($params, 1);
-          $stmt->bind_param($params[0], $values);
+          $stmt->bind_param($params[0], ...$values);
         }
       }
 
