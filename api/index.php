@@ -19,7 +19,7 @@ try {
   include $dir . "/users.php";
 
   $router->run();
-} catch (Error $e) {
+} catch (Throwable $e) {
   $code = $e->getCode();
   $message = $e->getMessage();
 
