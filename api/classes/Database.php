@@ -60,9 +60,8 @@ final class Database {
         if (is_array($params[1])) {
           $stmt->bind_param($params[0], ...$params[1]);
         } else {
-          for ($i = 1; $i < count($params); $i++) {
-            $stmt->bind_param($params[0], $params[$i]);
-          }
+          $values = array_slice($params, 1);
+          $stmt->bind_param($params[0], $values);
         }
       }
 
