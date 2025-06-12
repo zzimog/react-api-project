@@ -20,8 +20,15 @@ try {
 
   $router->run();
 } catch (Error $e) {
+  $code = $e->getCode();
+  $message = $e->getMessage();
+
+  if ($code != 404) {
+    $code = 500;
+  }
+
   $api = new APIController();
-  $api->sendError(404, "Resource not found.");
+  $api->sendError($code, $message);
 }
 
 die();

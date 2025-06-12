@@ -16,10 +16,16 @@ class Database {
         throw new Error("Database connection failed.");
       }
 
+      $db->set_charset("utf8mb4");
+
       $this->db = $db;
     } catch (Exception $e) {
       throw new Exception($e->getMessage());
     }
+  }
+
+  public function escape(string $string) {
+    return $this->db->real_escape_string($string);
   }
 
   public function query(string $query, ?array $params = []) {

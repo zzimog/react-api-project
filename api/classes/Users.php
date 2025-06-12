@@ -1,21 +1,16 @@
 <?php
 
 class Users extends APIController {
-  private array $fields;
-
-  public function __construct() {
-    parent::init();
-
-    $this->fields = [
-      "id",
-      "username",
-      "hash",
-      "email"
-    ];
-  }
+  const FIELDS = [
+    "id",
+    "username",
+    "hash",
+    "email"
+  ];
 
   public function getAll() {
-    $fields = implode(',', $this->fields);
+    $fields = implode(',', self::FIELDS);
+
     $result = $this->query(<<<EOD
       SELECT $fields
       FROM users
@@ -25,7 +20,7 @@ class Users extends APIController {
   }
 
   public function get(int $id) {
-    $fields = implode(',', $this->fields);
+    $fields = implode(',', self::FIELDS);
     $result = $this->query(<<<EOD
       SELECT $fields
       FROM users
@@ -36,10 +31,12 @@ class Users extends APIController {
       $this->sendResponse($result[0]);
     }
 
-    $this->sendError(404, "No user found with id: " . $id);
+    $this->sendError(404);
   }
 
   public function put() {
+    $request = $this->getRequest();
+
     $query = <<<EOD
       INSERT INTO users (
         username,
@@ -50,11 +47,16 @@ class Users extends APIController {
 
     $params = [
       "sss",
-      [
-        $this->request['username'],
-        $this->request['hash'],
-        $this->request['email']
-      ]
+      array_map(
+        function (string $s) {
+          return $this->escape($s);
+        },
+        [
+          $request['username'],
+          $request['hash'],
+          $request['email']
+        ]
+      )
     ];
 
     $result = $this->query($query, $params);
@@ -63,17 +65,19 @@ class Users extends APIController {
   }
 
   public function patch(int $id) {
-    $fields = [];
+    $request = $this->getRequest();
+    $fieldsAndValues = [];
 
-    foreach ($this->request as $key => $value) {
-      $fields[] = "$key='$value'";
+    foreach ($request as $key => $value) {
+      $escapedValue = $this->escape($value);
+      $fieldsAndValues[] = "`$key`=`$escapedValue`";
     }
 
-    $fields = join(', ', $fields);
+    $fieldsAndValues = join(', ', $fieldsAndValues);
 
     $result = $this->query(<<<EOD
       UPDATE users
-      SET $fields
+      SET $fieldsAndValues
       WHERE id=?
     EOD, ['i', $id]);
 
