@@ -67,7 +67,7 @@ abstract class BaseEntity extends APIController {
     if ($result_count === 1) {
       $this->sendResponse($result[0]);
     } elseif ($result_count > 1) {
-      $this->sendError(500, "Expected at least 1 record, multiple given.");
+      $this->sendError(500, "Expected at least 1 record, multiple found.");
     } else {
       $this->sendError(404);
     }
