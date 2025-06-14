@@ -1,6 +1,6 @@
 <?php
 
-class Users extends Entity {
+class Users extends BaseEntity {
   const TABLE = "users";
 
   const KEY = "id";

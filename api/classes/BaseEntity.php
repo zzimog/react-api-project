@@ -11,7 +11,7 @@
  * classes methods reimplementations
  * (maybe let child classes handle $request?)
  */
-abstract class Entity extends APIController {
+abstract class BaseEntity extends APIController {
   /**
    * Database table name
    */
