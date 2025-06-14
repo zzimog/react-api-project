@@ -9,6 +9,7 @@ if (file_exists(__LOCAL_CONF__)) {
 require_once __DIR__ . "/classes/Router.php";
 require_once __DIR__ . "/classes/Database.php";
 require_once __DIR__ . "/classes/APIController.php";
+require_once __DIR__ . "/classes/Entity.php";
 require_once __DIR__ . "/classes/Users.php";
 
 try {
