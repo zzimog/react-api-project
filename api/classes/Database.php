@@ -1,6 +1,8 @@
 <?php
 
 final class Database {
+  const CHARSET = "utf8mb4";
+
   protected $db;
 
   public function __construct() {
@@ -16,7 +18,7 @@ final class Database {
         throw new Error("Database connection failed.");
       }
 
-      $db->set_charset("utf8mb4");
+      $db->set_charset(self::CHARSET);
 
       $this->db = $db;
     } catch (Exception $e) {

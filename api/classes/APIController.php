@@ -24,10 +24,6 @@ class APIController {
     return $this->db;
   }
 
-  protected final function escape(string $string) {
-    return $this->db()->escape($string);
-  }
-
   protected final function query(string $query, ?array $params = []) {
     return $this->db()->query($query, $params);
   }
