@@ -1,5 +1,14 @@
 <?php
 
+/*
+CREATE TABLE users (
+  id INT(10) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  username VARCHAR(64) NOT NULL,
+  hash VARCHAR(255) NOT NULL,
+  email VARCHAR(400)
+)
+*/
+
 class User extends BaseEntity {
   const TABLE = "users";
 
@@ -13,13 +22,6 @@ class User extends BaseEntity {
   ];
 
   const PROTECTED_FIELDS = ["hash"];
-
-  const SCHEME = [
-    "id" => "INT(10) UNSIGNED AUTO_INCREMENT NOT NULL",
-    "username" => "VARCHAR(64) NOT NULL",
-    "hash" => "VARCHAR(255) NOT NULL",
-    "email" => "VARCHAR(400)"
-  ];
 
   private function checkUsername(array $data) {
     // Check if username is empty
@@ -43,9 +45,8 @@ class User extends BaseEntity {
   }
 
   private function hashPassword(array $data) {
-    // Check if there's password and password confirm
+    // Check if password and password_confirm are set
     if (!isset($data['password']) || !isset($data['password_confirm'])) {
-      // Password or password confirm not provided.
       $this->sendError(400, "PASSWORD_EMPTY");
     }
 
@@ -81,8 +82,25 @@ class User extends BaseEntity {
 
     parent::put([
       "username" => $data['username'],
-      "hash" => $this->hashPassword($data['password']),
+      "hash" => $this->hashPassword($data),
       "email" => $data['email'] ?? ""
     ]);
+  }
+
+  public function patch(int $key, ?array $data = null) {
+    $data = $data ?? $this->getRequest();
+
+    $this->checkFields($data, [
+      "username",
+      "password",
+      "password_confirm",
+      "email"
+    ]);
+
+    if (isset($data['username'])) {
+      $this->checkUsername($data);
+    }
+
+    parent::patch($key, $data);
   }
 }

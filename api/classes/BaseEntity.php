@@ -28,6 +28,10 @@ abstract class BaseEntity extends APIController {
    */
   const SCHEME = [];
 
+  /**
+   * @todo
+   * Improve check on required fields or maybe default values
+   */
   public function checkFields(array $fields, ?array $allowed = null) {
     $allowed_fields = $allowed ?? static::FIELDS;
     $invalid_fields = [];
@@ -46,6 +50,10 @@ abstract class BaseEntity extends APIController {
 
   /**
    * GET all records
+   *
+   * @todo
+   * Handle filters, order by, limit, ecc...
+   * (use query string or request body as json? or support both?)
    */
   public function getAll() {
     $fields = implode(',', array_diff(static::FIELDS, static::PROTECTED_FIELDS));
