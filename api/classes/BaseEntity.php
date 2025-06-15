@@ -1,16 +1,5 @@
 <?php
 
-/**
- * @todo
- *
- * 1. INSERT and UPDATE can be improved by using
- * same code to avoid repetitions (DRY)
- *
- * 2. Methods that rely on $request could be improved
- * to accept also data by parameters to improve child
- * classes methods reimplementations
- * (maybe let child classes handle $request?)
- */
 abstract class BaseEntity extends APIController {
   /**
    * Database table name
@@ -35,8 +24,25 @@ abstract class BaseEntity extends APIController {
   /**
    * @todo
    * Database table schema (optional)
+   * (maybe use method?)
    */
   const SCHEME = [];
+
+  public function checkFields(array $fields, ?array $allowed = null) {
+    $allowed_fields = $allowed ?? static::FIELDS;
+    $invalid_fields = [];
+
+    foreach ($fields as $key => $value) {
+      if (!in_array($key, $allowed_fields) || $key == static::KEY) {
+        $invalid_fields[] = $key;
+      }
+    }
+
+    if (!empty($invalid_fields)) {
+      $string = implode(', ', $invalid_fields);
+      $this->sendError(400, "Field(s) $string not found on entity " . static::TABLE . ".");
+    }
+  }
 
   /**
    * GET all records
@@ -76,22 +82,14 @@ abstract class BaseEntity extends APIController {
   /**
    * INSERT new record
    */
-  public function put() {
-    $request = $this->getRequest();
+  public function put(?array $data = null) {
+    $data = $data ?? $this->getRequest();
 
-    // Filter request fields
-    $valid_fields = array_filter(
-      $request,
-      fn($key) => in_array($key, static::FIELDS) && $key !== static::KEY,
-      ARRAY_FILTER_USE_KEY
-    );
+    $this->checkFields($data);
 
-    if (empty($valid_fields)) {
-      $this->sendError(400);
-    }
-
-    $fields = implode(',', array_keys($valid_fields));
-    $placeholders = implode(',', array_fill(0, count($valid_fields), '?'));
+    $fields = implode(',', array_keys($data));
+    $values = array_values($data);
+    $placeholders = implode(',', array_fill(0, count($data), '?'));
 
     $query = sprintf(
       "INSERT INTO %s (%s) VALUES (%s)",
@@ -99,8 +97,6 @@ abstract class BaseEntity extends APIController {
       $fields,
       $placeholders
     );
-
-    $values = array_values($valid_fields);
 
     /**
      * @todo
@@ -117,21 +113,13 @@ abstract class BaseEntity extends APIController {
   /**
    * UPDATE existing record
    */
-  public function patch(int $key) {
-    $request = $this->getRequest();
+  public function patch(int $key, ?array $data = null) {
+    $data = $data ?? $this->getRequest();
 
-    // Filter request fields
-    $valid_fields = array_filter(
-      $request,
-      fn($key) => in_array($key, static::FIELDS) && $key !== static::KEY,
-      ARRAY_FILTER_USE_KEY
-    );
+    $this->checkFields($data);
 
-    if (empty($valid_fields)) {
-      $this->sendError(400);
-    }
-
-    $placeholders = implode('=?, ', array_keys($valid_fields)) . '=?';
+    $values = array_values($data);
+    $placeholders = implode('=?, ', array_keys($data)) . '=?';
 
     $query = sprintf(
       "UPDATE %s SET %s WHERE %s=?",
@@ -139,8 +127,6 @@ abstract class BaseEntity extends APIController {
       $placeholders,
       static::KEY
     );
-
-    $values = array_values($valid_fields);
 
     /**
      * @todo

@@ -3,7 +3,7 @@
 $router->mount("*/users")
 
   ->route("/", function ($method) {
-    $users = new Users();
+    $users = new User();
 
     switch ($method) {
       case 'OPTIONS':
@@ -21,7 +21,7 @@ $router->mount("*/users")
   })
 
   ->route("/:user_id", function ($method, $args) {
-    $users = new Users();
+    $users = new User();
     $user_id = $args['user_id'];
 
     switch ($method) {

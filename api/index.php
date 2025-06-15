@@ -10,7 +10,7 @@ require_once __DIR__ . "/classes/Router.php";
 require_once __DIR__ . "/classes/Database.php";
 require_once __DIR__ . "/classes/APIController.php";
 require_once __DIR__ . "/classes/BaseEntity.php";
-require_once __DIR__ . "/classes/Users.php";
+require_once __DIR__ . "/classes/User.php";
 
 try {
   $dir = __DIR__ . "/routes";
