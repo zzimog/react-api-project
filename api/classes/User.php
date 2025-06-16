@@ -65,7 +65,7 @@ class User extends BaseEntity {
       $this->sendError(400, "PASSWORD_NOT_MATCH");
     }
 
-    return hash_hmac("sha256", $pwd, "CHANGE_THIS_TO_SECRET_KEY");
+    return password_hash($pwd, PASSWORD_BCRYPT);
   }
 
   public function put(?array $data = null) {
