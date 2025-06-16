@@ -2,10 +2,10 @@
 
 /*
 CREATE TABLE users (
-  id INT(10) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   username VARCHAR(64) NOT NULL,
   hash VARCHAR(255) NOT NULL,
-  email VARCHAR(400)
+  active BOOLEAN NOT NULL DEFAULT 0
 )
 */
 
@@ -18,10 +18,17 @@ class User extends BaseEntity {
     "id",
     "username",
     "hash",
-    "email"
+    "active"
   ];
 
   const PROTECTED_FIELDS = ["hash"];
+
+  const FORM_FIELDS = [
+    "username",
+    "password",
+    "password_confirm",
+    "active"
+  ];
 
   private function checkUsername(array $data) {
     // Check if username is empty
@@ -71,31 +78,21 @@ class User extends BaseEntity {
   public function put(?array $data = null) {
     $data = $data ?? $this->getRequest();
 
-    $this->checkFields($data, [
-      "username",
-      "password",
-      "password_confirm",
-      "email"
-    ]);
+    $this->checkFields($data, self::FORM_FIELDS);
 
     $this->checkUsername($data);
 
     parent::put([
       "username" => $data['username'],
       "hash" => $this->hashPassword($data),
-      "email" => $data['email'] ?? ""
+      "active" => $data['active'] ?? 0
     ]);
   }
 
   public function patch(int $key, ?array $data = null) {
     $data = $data ?? $this->getRequest();
 
-    $this->checkFields($data, [
-      "username",
-      "password",
-      "password_confirm",
-      "email"
-    ]);
+    $this->checkFields($data, self::FORM_FIELDS);
 
     if (isset($data['username'])) {
       $this->checkUsername($data);
