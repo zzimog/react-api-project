@@ -1,17 +1,10 @@
 import type { ChangeEvent, FormEvent } from 'react';
 import { useState } from 'react';
-import { Table, Modal, Button, Icon, Loader } from '@ui';
+import { Form, Button, Loader } from '@ui';
 import useQuery from '@/utils/useQuery';
-import Form from '@/ui/form/Form';
 import useFetch from '@/utils/useFetch';
 import capitalize from '@/utils/capitalize';
-
-export type UserModel = {
-  id: number;
-  username: string;
-  hash: string;
-  email: string;
-};
+import type UserModel from './model';
 
 export type UserEntityProps = {
   id?: string | number;
@@ -72,6 +65,19 @@ export const Entity = (props: UserEntityProps) => {
     },
   };
 
+  /*
+  <Form.Field
+    name="email"
+    label="Email"
+    type="email"
+    value={formData['email'] as string}
+    autoComplete="off"
+    pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}"
+    placeholder="ipsum@dolor.sit"
+    {...formFieldProps}
+  />
+  */
+
   return (
     <Form onSubmit={handleSubmit}>
       <Form.Header title={`${capitalize(mode)} user`} />
@@ -82,7 +88,7 @@ export const Entity = (props: UserEntityProps) => {
         label="Username"
         defaultValue={data?.username || ''}
         autoComplete="off"
-        required
+        required={mode === 'new'}
         {...formFieldProps}
       />
       <Form.Field
@@ -91,25 +97,15 @@ export const Entity = (props: UserEntityProps) => {
         help="Must be at least 8 characters"
         type="password"
         autoComplete="new-password"
-        required
+        required={mode === 'new'}
         {...formFieldProps}
       />
       <Form.Field
-        name="passwordConfirm"
+        name="password_confirm"
         label="Confirm password"
         type="password"
         autoComplete="new-password"
-        required
-        {...formFieldProps}
-      />
-      <Form.Field
-        name="email"
-        label="Email"
-        type="email"
-        defaultValue={data?.email || ''}
-        autoComplete="off"
-        pattern="/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/"
-        placeholder="ipsum@dolor.sit"
+        required={mode === 'new'}
         {...formFieldProps}
       />
 
@@ -136,89 +132,4 @@ export const Entity = (props: UserEntityProps) => {
   );
 };
 
-export const Zoom = () => {
-  const [entity, setEntity] = useState<UserEntityProps>();
-
-  const { data, dataUpdatedAt, isPending, refetch } = useQuery<UserModel[]>(
-    '/users',
-    {
-      delay: 1000,
-      placeholder: [],
-    }
-  );
-
-  if (isPending) {
-    return (
-      <div style={{ padding: '32px' }}>
-        <Loader />
-      </div>
-    );
-  }
-
-  return (
-    <div style={{ padding: '16px' }}>
-      {entity?.mode && (
-        <Modal open={true} width="400px" onClose={() => setEntity(undefined)}>
-          <Entity id={entity.id} mode={entity.mode} />
-        </Modal>
-      )}
-
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px',
-          marginBottom: '8px',
-        }}
-      >
-        <Button onClick={refetch}>
-          <Icon name="refresh" />
-          Refresh
-        </Button>
-
-        <Button
-          style={{ marginLeft: 'auto' }}
-          onClick={() =>
-            setEntity({
-              mode: 'new',
-            })
-          }
-        >
-          <Icon name="person_add" />
-          New
-        </Button>
-      </div>
-
-      <Table
-        style={{ marginBottom: '8px' }}
-        data={{
-          headers: ['ID', 'Username', 'Hash', 'Email'],
-          rows: data!.map((row) => ({
-            ...row,
-            id: (
-              <a
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setEntity({
-                    id: row['id'],
-                    mode: 'view',
-                  });
-                }}
-              >
-                {row['id']}
-              </a>
-            ),
-          })),
-        }}
-      />
-
-      <span>Last update: {dataUpdatedAt?.toLocaleString()}</span>
-    </div>
-  );
-};
-
-export default {
-  Entity,
-  Zoom,
-};
+export default Entity;

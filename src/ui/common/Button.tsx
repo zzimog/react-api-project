@@ -1,14 +1,18 @@
-import { useRef, type ButtonHTMLAttributes, type MouseEvent } from 'react';
-import styled from '../styled';
+import type { ButtonHTMLAttributes, MouseEvent } from 'react';
+import { createRef } from 'react';
+import styled from '@/ui/styled';
+import generateClasses from '@/utils/generateClasses';
+
+const classes = generateClasses('Button', ['root', 'halo', 'label']);
 
 export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement>;
 
-const ButtonHoverEffect = styled.div({
+export const ButtonHalo = styled.div({
   position: 'absolute',
   top: 'var(--y)',
   left: 'var(--x)',
-  width: 'var(--hoverEffectSize)',
-  height: 'var(--hoverEffectSize)',
+  width: 'var(--haloSize)',
+  height: 'var(--haloSize)',
   transform: 'translate(-50%, -50%)',
   transitionProperty: 'width, height',
   transitionDuration: '.2s',
@@ -17,11 +21,12 @@ const ButtonHoverEffect = styled.div({
   opacity: 0.25,
 });
 
-const ButtonRoot = styled.button({
-  '--hoverEffectSize': 0,
+export const ButtonRoot = styled.button({
+  '--haloSize': 0,
 
   position: 'relative',
   display: 'flex',
+  justifyContent: 'center',
   alignItems: 'center',
   gap: '4px',
   width: 'fit-content',
@@ -35,17 +40,17 @@ const ButtonRoot = styled.button({
   overflow: 'hidden',
 
   [`&:hover`]: {
-    '--hoverEffectSize': '100px',
+    '--haloSize': '100px',
   },
 
   [`&:active`]: {
-    '--hoverEffectSize': '500px',
+    '--haloSize': '500px',
   },
 });
 
 export const Button = (props: ButtonProps) => {
   const { children, onMouseEnter, onMouseLeave, ...rest } = props;
-  const buttonRef = useRef<HTMLButtonElement>(null);
+  const buttonRef = createRef<HTMLButtonElement>();
 
   function handleMouseMove(evt: globalThis.MouseEvent) {
     if (!buttonRef.current) {
@@ -69,7 +74,13 @@ export const Button = (props: ButtonProps) => {
   }
 
   function handleMouseLeave(evt: MouseEvent<HTMLButtonElement>) {
+    if (!buttonRef.current) {
+      return;
+    }
+
     window.removeEventListener('mousemove', handleMouseMove);
+    buttonRef.current.style.removeProperty('--x');
+    buttonRef.current.style.removeProperty('--y');
 
     if (onMouseLeave) {
       onMouseLeave(evt);
@@ -79,11 +90,12 @@ export const Button = (props: ButtonProps) => {
   return (
     <ButtonRoot
       ref={buttonRef}
+      className={classes.root}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       {...rest}
     >
-      <ButtonHoverEffect />
+      <ButtonHalo className={classes.halo} />
       {children}
     </ButtonRoot>
   );

@@ -1,4 +1,4 @@
-import type { ReactNode, TableHTMLAttributes } from 'react';
+import type { HTMLAttributes, ReactNode } from 'react';
 import clsx from 'clsx';
 import styled from '../styled';
 
@@ -11,13 +11,19 @@ export type TableProps = {
     headers?: string[];
     rows: TableRowObject[];
   };
-} & TableHTMLAttributes<HTMLTableElement>;
+} & HTMLAttributes<HTMLElement>;
 
 const TableRoot = styled.div({
   paddingBottom: '8px',
   borderRadius: '8px',
   background: '#fff',
-  boxShadow: '5px 5px 100px rgba(68, 77, 247, 0.2)',
+  boxShadow: '5px 5px 20px rgba(68, 77, 247, 0.1)',
+
+  [`& > p`]: {
+    display: 'block',
+    padding: '16px 16px 8px',
+    textAlign: 'center',
+  },
 
   [`table`]: {
     width: '100%',
@@ -47,6 +53,14 @@ const TableRoot = styled.div({
 export const Table = (props: TableProps) => {
   const { data, ...rest } = props;
 
+  if (!data.rows.length) {
+    return (
+      <TableRoot>
+        <p>No data.</p>
+      </TableRoot>
+    );
+  }
+
   return (
     <TableRoot {...rest}>
       <table>
@@ -71,31 +85,21 @@ export const Table = (props: TableProps) => {
         )}
 
         <tbody>
-          {!data.rows.length ? (
-            <tr>
-              <td colSpan={data.headers?.length || 1}>No data.</td>
+          {data.rows.map((row, index) => (
+            <tr key={index} className={(index + 1) % 2 ? 'odd' : 'even'}>
+              {Object.keys(row).map((key, index, { length }) => (
+                <td
+                  key={index}
+                  className={clsx({
+                    first: index === 0,
+                    last: index === length - 1,
+                  })}
+                >
+                  {row[key]}
+                </td>
+              ))}
             </tr>
-          ) : (
-            data.rows.map((row, index) => {
-              const cls = (index + 1) % 2 ? 'odd' : 'even';
-
-              return (
-                <tr key={index} className={cls}>
-                  {Object.keys(row).map((key, index, { length }) => (
-                    <td
-                      key={index}
-                      className={clsx({
-                        first: index === 0,
-                        last: index === length - 1,
-                      })}
-                    >
-                      {row[key]}
-                    </td>
-                  ))}
-                </tr>
-              );
-            })
-          )}
+          ))}
         </tbody>
       </table>
     </TableRoot>

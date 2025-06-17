@@ -1,9 +1,10 @@
-import User from './entities/User';
+import UserZoom from './entities/user/Zoom';
 
 function App() {
   return (
     <>
-      <User.Zoom />
+      <UserZoom />
+      <UserZoom />
     </>
   );
 }
