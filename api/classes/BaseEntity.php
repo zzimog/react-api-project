@@ -12,28 +12,59 @@ abstract class BaseEntity extends APIController {
   const KEY = null;
 
   /**
-   * Table fields
+   * Table columns
    */
-  const FIELDS = [];
+  const COLUMNS = [];
 
   /**
-   * Protected fields (will be excluded from GET requests)
+   * Protected columns (will be excluded from GET requests)
    */
-  const PROTECTED_FIELDS = [];
+  const PROTECTED_COLUMNS = [];
 
   /**
-   * @todo
-   * Database table schema (optional)
-   * (maybe use method?)
+   * Other table constraints
    */
-  const SCHEME = [];
+  const CONSTRAINTS = [];
+
+  public final function getColumns() {
+    return array_is_list(static::COLUMNS)
+      ? static::COLUMNS
+      : array_keys(static::COLUMNS);
+  }
+
+  /**
+   * Create database table
+   */
+  public static function createTable(?Database $db = null) {
+    $db = $db ?? new Database();
+    $table_name = static::TABLE;
+
+    if (is_null($table_name) || count(static::COLUMNS) <= 0) {
+      throw new Error("Table name or columns not defined.");
+    }
+
+    if (array_is_list(static::COLUMNS)) {
+      throw new Error("Columns property must be associative array, list found.");
+    }
+
+    $def = [];
+
+    foreach (static::COLUMNS as $name => $datatype) {
+      $def[] = "$name $datatype";
+    }
+
+    $def = array_merge($def, static::CONSTRAINTS);
+    $def = implode(',', $def);
+
+    return $db->query("CREATE TABLE $table_name ($def)");
+  }
 
   /**
    * @todo
    * Improve check on required fields or maybe default values
    */
   public function checkFields(array $fields, ?array $allowed = null) {
-    $allowed_fields = $allowed ?? static::FIELDS;
+    $allowed_fields = $allowed ?? $this->getColumns();
     $invalid_fields = [];
 
     foreach ($fields as $key => $value) {
@@ -56,7 +87,7 @@ abstract class BaseEntity extends APIController {
    * (use query string or request body as json? or support both?)
    */
   public function getAll() {
-    $fields = implode(',', array_diff(static::FIELDS, static::PROTECTED_FIELDS));
+    $fields = implode(',', array_diff($this->getColumns(), static::PROTECTED_COLUMNS));
     $query = sprintf("SELECT %s FROM %s", $fields, static::TABLE);
     $result = $this->query($query);
 
@@ -67,7 +98,7 @@ abstract class BaseEntity extends APIController {
    * GET specific record by primary key
    */
   public function get(int $key) {
-    $fields = implode(',', array_diff(static::FIELDS, static::PROTECTED_FIELDS));
+    $fields = implode(',', array_diff($this->getColumns(), static::PROTECTED_COLUMNS));
     $query = sprintf(
       "SELECT %s FROM %s WHERE %s=?",
       $fields,

@@ -15,7 +15,7 @@ final class Database {
       );
 
       if ($db->connect_error) {
-        throw new Error("Database connection failed.");
+        throw new Error("Database connection failed");
       }
 
       $db->set_charset(self::CHARSET);
@@ -39,13 +39,13 @@ final class Database {
         return [
           "affectedRows" => $this->db->affected_rows,
           "error" => $result,
-          "errno" => $stmt->errno
+          "code" => $stmt->errno
         ];
       }
 
       return $result->fetch_all(MYSQLI_ASSOC);
-    } catch (Exception $e) {
-      throw new Exception($e->getMessage());
+    } catch (Throwable $e) {
+      throw new Error($e->getMessage());
     }
   }
 
@@ -55,7 +55,7 @@ final class Database {
       $stmt = $db->prepare($query);
 
       if ($stmt === false) {
-        throw new Exception("Unable to prepare statement.");
+        throw new Error("Unable to prepare statement");
       }
 
       if ($params) {
@@ -70,8 +70,24 @@ final class Database {
       $stmt->execute();
 
       return $stmt;
-    } catch (Exception $e) {
-      throw new Exception($e->getMessage());
+    } catch (Throwable $e) {
+      throw new Error($e->getMessage());
+    }
+  }
+
+  public function tableExists(string $table_name, ?bool $schema = false): bool|array {
+    try {
+      $result = $schema == true
+        ? $this->query("DESCRIBE $table_name")
+        : $this->query("SELECT 1 FROM $table_name LIMIT 1");
+
+      if (isset($result['error']) && $result['error'] == true) {
+        return false;
+      }
+
+      return $schema ? $result : true;
+    } catch (Throwable $_) {
+      return false;
     }
   }
 }

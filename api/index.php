@@ -11,13 +11,16 @@ require_once __DIR__ . "/classes/Database.php";
 require_once __DIR__ . "/classes/APIController.php";
 require_once __DIR__ . "/classes/BaseEntity.php";
 require_once __DIR__ . "/classes/User.php";
+require_once __DIR__ . "/classes/Person.php";
 
 try {
   $dir = __DIR__ . "/routes";
   $router = new Router();
 
+  include $dir . "/setup.php";
   include $dir . "/debug.php";
   include $dir . "/users.php";
+  include $dir . "/persons.php";
 
   $router->run();
 } catch (Throwable $e) {

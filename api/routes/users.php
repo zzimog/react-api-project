@@ -20,22 +20,22 @@ $router->mount("*/users")
     }
   })
 
-  ->route("/:user_id", function ($method, $args) {
+  ->route("/:id", function ($method, $args) {
     $users = new User();
-    $user_id = $args['user_id'];
+    $id = $args['id'];
 
     switch ($method) {
       case 'OPTIONS':
         $users->options(["OPTIONS", "GET", "PATCH", "DELETE"]);
 
       case 'GET':
-        $users->get($user_id);
+        $users->get($id);
 
       case 'PATCH':
-        $users->patch($user_id);
+        $users->patch($id);
 
       case 'DELETE':
-        $users->delete($user_id);
+        $users->delete($id);
 
       default:
         $users->sendError(405);

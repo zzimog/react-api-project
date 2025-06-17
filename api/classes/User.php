@@ -1,27 +1,18 @@
 <?php
 
-/*
-CREATE TABLE users (
-  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  username VARCHAR(64) NOT NULL,
-  hash VARCHAR(255) NOT NULL,
-  active BOOLEAN NOT NULL DEFAULT 0
-)
-*/
-
 class User extends BaseEntity {
   const TABLE = "users";
 
   const KEY = "id";
 
-  const FIELDS = [
-    "id",
-    "username",
-    "hash",
-    "active"
+  const COLUMNS = [
+    "id" => "INT UNSIGNED AUTO_INCREMENT PRIMARY KEY",
+    "username" => "VARCHAR(64) NOT NULL",
+    "hash" => "VARCHAR(255) NOT NULL",
+    "active" => "BOOLEAN NOT NULL DEFAULT 0"
   ];
 
-  const PROTECTED_FIELDS = ["hash"];
+  const PROTECTED_COLUMNS = ["hash"];
 
   const FORM_FIELDS = [
     "username",
@@ -38,7 +29,7 @@ class User extends BaseEntity {
 
     // Check if username already exists
     $query = sprintf(
-      "SELECT id FROM %s WHERE %s=?",
+      "SELECT username FROM %s WHERE %s=?",
       static::TABLE,
       "username"
     );
