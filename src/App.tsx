@@ -1,12 +1,11 @@
-import UserZoom from './entities/user/Zoom';
+import { ThemeProvider, ThemeSwitcher } from '@/ui';
 
-function App() {
+const App = () => {
   return (
-    <>
-      <UserZoom />
-      <UserZoom />
-    </>
+    <ThemeProvider>
+      <ThemeSwitcher />
+    </ThemeProvider>
   );
-}
+};
 
 export default App;

@@ -1,8 +1,18 @@
 :root {
-  --bg: #ececf3;
-  --color-primary: #444cf7;
+  font-family: sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
 
-  font-family: 'Manrope Variable', 'IBM Plex Sans Variable', sans-serif;
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
 }
 
 *,
@@ -11,23 +21,21 @@
   padding: 0;
   margin: 0;
   box-sizing: border-box;
-  transition-property: none;
-  transition-timing-function: ease-in-out;
-  transition-duration: 0.2s;
 }
 
 body {
   min-height: 100vh;
-  background: var(--bg);
-}
+  line-height: 1.5;
+  font-family: 'Manrope Variable', system-ui, Helvetica, Arial, sans-serif;
+  font-weight: 400;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 
-input,
-button,
-textarea {
-  font: inherit;
-  outline: none;
-}
+  /* debug */
 
-button {
-  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
