@@ -1,8 +1,7 @@
-import type { ReactNode } from 'react';
 import { Button } from '../Button/Button';
 
 export type TableRow = {
-  [key: string]: ReactNode;
+  [key: string]: unknown;
 };
 
 export type TableAction = {
