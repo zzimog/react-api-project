@@ -1,4 +1,10 @@
 :root {
+  --color-black: #06080e;
+  --color-white: #f3f7f4;
+  --color-primary: #007991;
+  --color-secondary: #9cd3c6;
+  --color-accent: #dfc853;
+
   font-family: sans-serif;
   line-height: 1.5;
   font-weight: 400;
@@ -38,4 +44,28 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+input,
+textarea,
+button,
+select {
+  font: inherit;
+}
+
+table {
+  border-collapse: collapse;
+  border: 1px solid black;
+  color: #000;
+  background: #fff;
+
+  th,
+  td {
+    padding: 8px;
+    border: 1px solid black;
+  }
+
+  th {
+    background: lightgray;
+  }
 }
