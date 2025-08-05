@@ -1,14 +1,14 @@
-import { hsl } from './hsl';
+import { hsl } from './colorUtils';
 
 // PALETTE
 // https://coolors.co/06080e-007991-9cd3c6-f3f7f4-dfc853
 
 export type ThemeColors = {
-  black: hsl;
-  white: hsl;
-  primary: hsl;
-  secondary: hsl;
-  accent: hsl;
+  black: string;
+  white: string;
+  primary: string;
+  secondary: string;
+  accent: string;
 };
 
 export const colors: ThemeColors = {

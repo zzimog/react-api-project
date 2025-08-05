@@ -20,8 +20,8 @@ const ButtonRoot = styled.button<ButtonProps>`
   padding: 0.5em 0.75em;
   font-size: 1em;
   font-weight: 500;
-  color: ${theme.colors.white.hex()};
-  background: ${theme.colors.primary.darken(0.2).hex()};
+  color: ${theme.colors.white};
+  background: ${theme.colors.primary};
   overflow: hidden;
   cursor: pointer;
 `;
