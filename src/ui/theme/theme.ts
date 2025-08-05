@@ -1,42 +1,15 @@
+import { colors } from './colors';
+
 export const theme = {
-  color: {
-    black: '#06080e',
-    white: '#f3f7f4',
-    primary: {
-      default: '#007991',
-      100: '#00181d',
-      200: '#003039',
-      300: '#004756',
-      400: '#005f72',
-      500: '#007991',
-      600: '#00b4d8',
-      700: '#23daff',
-      800: '#6ce7ff',
-      900: '#b6f3ff',
-    },
-    secondary: {
-      default: '#9cd3c6',
-      100: '#17332c',
-      200: '#2e6558',
-      300: '#449884',
-      400: '#6abca9',
-      500: '#9cd3c6',
-      600: '#b0dcd1',
-      700: '#c4e4dd',
-      800: '#d8ede8',
-      900: '#ebf6f4',
-    },
-    accent: {
-      default: '#dfc853',
-      100: '#342d09',
-      200: '#675913',
-      300: '#9b861c',
-      400: '#cfb326',
-      500: '#dfc853',
-      600: '#e6d375',
-      700: '#ecde98',
-      800: '#f2e9ba',
-      900: '#f9f4dd',
-    },
+  /* Default values */
+  fontFamily: `'Manrope Variable', system-ui, Helvetica, Arial, sans-serif`,
+  fontWeight: 400,
+  lineHeight: 1.5,
+
+  /* Utilities */
+  colors,
+  spacer: 4,
+  spacing(factor: number) {
+    return `${theme.spacer * factor}px`;
   },
 };

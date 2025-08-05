@@ -10,8 +10,6 @@
   font-weight: 500;
   cursor: pointer;
   overflow: hidden;
-  color: black;
-  background: lightgray;
 
   &:active {
     color: whitesmoke;

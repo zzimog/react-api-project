@@ -1,20 +1,16 @@
-import clsx from 'clsx';
-import type { CSSProperties, HTMLAttributes } from 'react';
+import type { HTMLAttributes } from 'react';
+import styled from '@emotion/styled';
 
 export type IconProps = {
   name: string;
 } & HTMLAttributes<HTMLElement>;
 
-const iconStyle: CSSProperties = {
-  fontFamily: 'Material Symbols Rounded Variable',
-};
+const IconRoot = styled.i`
+  font-family: 'Material Symbols Rounded Variable';
+`;
 
 export const Icon = (inProps: IconProps) => {
-  const { name, className, ...rest } = inProps;
+  const { name, ...rest } = inProps;
 
-  return (
-    <i style={iconStyle} className={clsx('icon', className)} {...rest}>
-      {name}
-    </i>
-  );
+  return <IconRoot {...rest}>{name}</IconRoot>;
 };

@@ -74,7 +74,7 @@ export const UsersForm = (inProps: FormProps) => {
   }
 
   return (
-    <Flex dir="column" align="flex-start" gap={8}>
+    <Flex dir="column" align="flex-start">
       <h1>User</h1>
       <Flex dir="column">
         <label htmlFor="id">ID</label>
@@ -114,7 +114,7 @@ export const UsersForm = (inProps: FormProps) => {
           onChange={handleFormChange}
         />
       </Flex>
-      <Flex align="center" gap={4}>
+      <Flex align="center" spacing={1}>
         <input
           type="checkbox"
           name="active"

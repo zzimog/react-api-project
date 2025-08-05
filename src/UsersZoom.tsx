@@ -39,11 +39,7 @@ export const UsersZoom = () => {
   }
 
   function handleFormSave() {
-    setFormState({
-      mode: 'new',
-      open: false,
-    });
-
+    handleModalClose();
     refetch();
   }
 
@@ -98,15 +94,15 @@ export const UsersZoom = () => {
         </Modal>
       )}
 
-      <Flex dir="column" gap={8}>
-        <Flex justify="space-between" align="center" gap={8}>
+      <Flex dir="column">
+        <Flex justify="space-between" align="center">
           <h1>{title}</h1>
           <Button icon="add" label="New" onClick={handleNew} />
         </Flex>
 
         <Table {...zoom} />
 
-        <Flex align="center" gap={8}>
+        <Flex align="center">
           <Button icon="refresh" onClick={refetch} />
 
           <span>

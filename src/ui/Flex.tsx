@@ -1,4 +1,6 @@
-import type { CSSProperties, PropsWithChildren } from 'react';
+import type { CSSProperties } from 'react';
+import styled from '@emotion/styled';
+import { theme } from './theme';
 
 export type FlexProps = {
   dir?: 'row' | 'column';
@@ -6,37 +8,17 @@ export type FlexProps = {
   justify?: CSSProperties['justifyContent'];
   align?: CSSProperties['alignItems'];
   placement?: CSSProperties['alignContent'];
-  gap?: number;
+  spacing?: number;
   style?: CSSProperties;
-} & PropsWithChildren;
-
-export const Flex = (inProps: FlexProps) => {
-  const {
-    dir = 'row',
-    wrap = true,
-    justify = 'normal',
-    align = 'normal',
-    placement = 'normal',
-    gap = 0,
-    style,
-    children,
-    ...rest
-  } = inProps;
-
-  const flexStyle: CSSProperties = {
-    width: '100%',
-    display: 'flex',
-    flexFlow: `${dir} ${wrap ? 'wrap' : 'nowrap'}`,
-    justifyContent: justify,
-    alignItems: align,
-    alignContent: placement,
-    gap,
-    ...style,
-  };
-
-  return (
-    <div style={flexStyle} {...rest}>
-      {children}
-    </div>
-  );
 };
+
+export const Flex = styled.div<FlexProps>((props) => ({
+  width: '100%',
+  display: 'flex',
+  flexDirection: props.dir,
+  flexWrap: props.wrap ? 'wrap' : 'nowrap',
+  justifyContent: props.justify,
+  alignItems: props.align,
+  alignContent: props.placement,
+  gap: theme.spacing(props.spacing ?? 2),
+}));
