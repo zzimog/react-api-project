@@ -26,8 +26,7 @@
     /* Project options */
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "@ui": ["./src/ui"]
+      "@/*": ["./src/*"]
     }
   },
   "include": ["src"]

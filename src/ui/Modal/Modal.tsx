@@ -1,7 +1,7 @@
 import { useState, type PropsWithChildren } from 'react';
 import { createPortal } from 'react-dom';
 import styled from '@emotion/styled';
-import { Flex, Button, theme } from '@ui';
+import { Flex, Button, theme } from '@/ui';
 
 export type ModalProps = {
   open?: boolean;

@@ -1,7 +1,7 @@
 import type { ButtonHTMLAttributes } from 'react';
 import styled from '@emotion/styled';
 import clsx from 'clsx';
-import { Icon, theme } from '@ui';
+import { Icon, theme } from '@/ui';
 import './button.css';
 
 export type ButtonProps = {

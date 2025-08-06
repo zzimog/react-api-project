@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { type TableRow, Flex, Table, Button, Modal } from './ui';
-import { useFetch } from './utils/useFetch';
-import { UsersForm } from './UsersForm';
+import { type TableRow, Flex, Table, Button, Modal, Text } from '@/ui';
+import { useFetch } from '@/utils';
+import { UsersForm } from '@/UsersForm';
 
 const endpoint = 'http://localhost/rest/users';
 
@@ -96,7 +96,7 @@ export const UsersZoom = () => {
 
       <Flex dir="column">
         <Flex justify="space-between" align="center">
-          <h1>{title}</h1>
+          <Text as="h1">{title}</Text>
           <Button icon="add" label="New" onClick={handleNew} />
         </Flex>
 
@@ -104,10 +104,7 @@ export const UsersZoom = () => {
 
         <Flex align="center">
           <Button icon="refresh" onClick={refetch} />
-
-          <span>
-            Updated at: <b>{dataUpdatedAt?.toLocaleString()}</b>
-          </span>
+          Updated at: <b>{dataUpdatedAt?.toLocaleString()}</b>
         </Flex>
       </Flex>
     </>

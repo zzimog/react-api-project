@@ -1,6 +1,6 @@
 import { useEffect, useState, type ChangeEvent } from 'react';
-import { Flex, Button } from './ui';
-import { useFetch } from './utils/useFetch';
+import { Flex, Button, Text } from '@/ui';
+import { useFetch } from '@/utils';
 
 type FormData = {
   id?: number;
@@ -75,7 +75,7 @@ export const UsersForm = (inProps: FormProps) => {
 
   return (
     <Flex dir="column" align="flex-start">
-      <h1>User</h1>
+      <Text as="h1">User</Text>
       <Flex dir="column">
         <label htmlFor="id">ID</label>
         <input
