@@ -1,5 +1,5 @@
 import { useEffect, useState, type ChangeEvent } from 'react';
-import { Flex, Button, Text } from '@/ui';
+import { Flex, Button, Text, Loader } from '@/ui';
 import { useFetch } from '@/utils';
 
 type FormData = {
@@ -70,7 +70,7 @@ export const UsersForm = (inProps: FormProps) => {
   }, [data]);
 
   if (id && isPending) {
-    return <b>Pending...</b>;
+    return <Loader />;
   }
 
   return (

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { type TableRow, Flex, Table, Button, Modal, Text } from '@/ui';
+import { type TableRow, Flex, Table, Button, Modal, Text, Loader } from '@/ui';
 import { useFetch } from '@/utils';
 import { UsersForm } from '@/UsersForm';
 
@@ -79,7 +79,7 @@ export const UsersZoom = () => {
   };
 
   if (isPending) {
-    return <b>Pending...</b>;
+    return <Loader />;
   }
 
   if (isError) {
@@ -96,16 +96,18 @@ export const UsersZoom = () => {
 
       <Flex dir="column">
         <Flex justify="space-between" align="center">
-          <Text as="h1">{title}</Text>
+          <Text as="h1" style={{ flexGrow: 1 }}>
+            {title}
+          </Text>
           <Button icon="add" label="New" onClick={handleNew} />
+          <Button icon="refresh" onClick={refetch} />
         </Flex>
 
         <Table {...zoom} />
 
-        <Flex align="center">
-          <Button icon="refresh" onClick={refetch} />
+        <Text size="sm">
           Updated at: <b>{dataUpdatedAt?.toLocaleString()}</b>
-        </Flex>
+        </Text>
       </Flex>
     </>
   );

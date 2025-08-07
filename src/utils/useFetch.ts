@@ -29,7 +29,7 @@ export function useFetch<T>(opts: FetchOptions<T>) {
 
   const [lastRefetch, setLastRefetch] = useState(Date.now());
   const [state, setState] = useState<FetchState<T>>({
-    status: 'idle',
+    status: enabled ? 'pending' : 'idle',
     data: initialData,
   });
 

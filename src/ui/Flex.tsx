@@ -12,7 +12,13 @@ export type FlexProps = {
   style?: CSSProperties;
 };
 
-export const Flex = styled.div<FlexProps>((props) => ({
+export type FlexItemProps = {
+  grow?: number;
+  shrink?: number;
+  basis?: number;
+};
+
+const FlexRoot = styled.div<FlexProps>((props) => ({
   width: '100%',
   display: 'flex',
   flexDirection: props.dir,
@@ -21,4 +27,12 @@ export const Flex = styled.div<FlexProps>((props) => ({
   alignItems: props.align,
   alignContent: props.placement,
   gap: theme.spacing(props.spacing ?? 2),
+}));
+
+export const Flex = (inProps: FlexProps) => {
+  return <FlexRoot {...inProps} />;
+};
+
+Flex.Item = styled.div<FlexItemProps>((props) => ({
+  width: '100%',
 }));

@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { match } from '@/utils';
 
 export type TextProps = {
-  size?: number;
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 };
 
 export const Text = styled.span<TextProps>`
@@ -15,7 +15,13 @@ export const Text = styled.span<TextProps>`
   }};
 
   font-size: ${({ as, size }) =>
-    size ||
+    match(size, {
+      xl: 20,
+      lg: 18,
+      md: 16,
+      sm: 14,
+      xs: 12,
+    }) ||
     match(as, {
       h1: 22,
       h2: 20,
