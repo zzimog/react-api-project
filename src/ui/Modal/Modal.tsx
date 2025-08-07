@@ -5,23 +5,25 @@ import { Flex, Button, theme } from '@/ui';
 
 export type ModalProps = {
   open?: boolean;
+  loading?: boolean;
   onClose?: () => void;
 } & PropsWithChildren;
 
 const ModalRoot = styled.div`
   position: fixed;
   inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(2px);
 
   .modal-window {
-    position: absolute;
-    top: 50%;
-    left: 50%;
+    max-width: calc(100% - 64px);
+    max-height: calc(100% - 64px);
     padding: ${theme.spacing(4)};
     color: black;
     background: white;
-    transform: translate(-50%, -50%);
   }
 `;
 

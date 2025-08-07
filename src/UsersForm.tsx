@@ -1,10 +1,10 @@
-import { useEffect, useState, type ChangeEvent } from 'react';
-import { Flex, Button, Text, Loader } from '@/ui';
+import { type ChangeEvent, useState } from 'react';
+import { Flex, Button, Text } from '@/ui';
 import { useFetch } from '@/utils';
 
-type FormData = {
+type UserData = {
   id?: number;
-  username: string;
+  username?: string;
   active?: boolean;
 };
 
@@ -13,21 +13,28 @@ type FormProps = {
   onSave?: () => void;
 };
 
-export const endpoint = 'http://localhost/rest/users';
+function useForm<T>(endpoint: string, id?: string | number, initialData?: T) {
+  const { data, ...fetch } = useFetch<T>({
+    url: `${endpoint}/${id}?sleep=2`,
+    enabled: id ? true : false,
+    initialData,
+  });
+
+  const [formData, setFormData] = useState<T | undefined>(data);
+
+  return {
+    formData,
+    setFormData,
+    ...fetch,
+  };
+}
+
+const endpoint = 'http://localhost/rest/users';
 
 export const UsersForm = (inProps: FormProps) => {
   const { id, onSave } = inProps;
 
-  const { data, isPending } = useFetch<FormData>({
-    url: `${endpoint}/${id}?sleep=2`,
-    enabled: id ? true : false,
-    initialData: {
-      username: '',
-      active: false,
-    },
-  });
-
-  const [formData, setFormData] = useState<FormData>(data!);
+  const { isPending, formData, setFormData } = useForm<UserData>(endpoint, id);
 
   function handleFormChange(e: ChangeEvent<HTMLInputElement>) {
     const { name, value, checked, type } = e.target;
@@ -39,9 +46,9 @@ export const UsersForm = (inProps: FormProps) => {
     }));
   }
 
-  async function handleFormSave() {
-    delete formData.id;
-    delete formData.active;
+  async function handleSave() {
+    delete formData?.id;
+    delete formData?.active;
 
     const resp = await fetch(endpoint, {
       method: 'post',
@@ -65,14 +72,6 @@ export const UsersForm = (inProps: FormProps) => {
     alert(JSON.stringify(json, null, '  '));
   }
 
-  useEffect(() => {
-    setFormData(data!);
-  }, [data]);
-
-  if (id && isPending) {
-    return <Loader />;
-  }
-
   return (
     <Flex dir="column" align="flex-start">
       <Text as="h1">User</Text>
@@ -82,7 +81,7 @@ export const UsersForm = (inProps: FormProps) => {
           type="text"
           name="id"
           id="id"
-          defaultValue={formData.id}
+          defaultValue={formData?.id}
           disabled
         />
       </Flex>
@@ -93,7 +92,8 @@ export const UsersForm = (inProps: FormProps) => {
           name="username"
           id="username"
           onChange={handleFormChange}
-          value={formData.username}
+          value={formData?.username}
+          disabled={(id && isPending) as boolean}
         />
       </Flex>
       <Flex dir="column">
@@ -103,6 +103,7 @@ export const UsersForm = (inProps: FormProps) => {
           name="password"
           id="password"
           onChange={handleFormChange}
+          disabled={(id && isPending) as boolean}
         />
       </Flex>
       <Flex dir="column">
@@ -112,6 +113,7 @@ export const UsersForm = (inProps: FormProps) => {
           name="confirm"
           id="confirm"
           onChange={handleFormChange}
+          disabled={(id && isPending) as boolean}
         />
       </Flex>
       <Flex align="center" spacing={1}>
@@ -120,12 +122,18 @@ export const UsersForm = (inProps: FormProps) => {
           name="active"
           id="active"
           onChange={handleFormChange}
-          checked={formData.active}
+          checked={formData?.active}
+          disabled={(id && isPending) as boolean}
         />
         <label htmlFor="active">Active</label>
       </Flex>
 
-      <Button icon="save" label="Save" onClick={handleFormSave} />
+      <Button
+        icon="save"
+        label="Save"
+        onClick={handleSave}
+        disabled={(id && isPending) as boolean}
+      />
     </Flex>
   );
 };

@@ -1,4 +1,4 @@
-import type { CSSProperties } from 'react';
+import type { CSSProperties, PropsWithChildren } from 'react';
 import styled from '@emotion/styled';
 import { theme } from './theme';
 
@@ -10,13 +10,13 @@ export type FlexProps = {
   placement?: CSSProperties['alignContent'];
   spacing?: number;
   style?: CSSProperties;
-};
+} & PropsWithChildren;
 
 export type FlexItemProps = {
   grow?: number;
   shrink?: number;
   basis?: number;
-};
+} & PropsWithChildren;
 
 const FlexRoot = styled.div<FlexProps>((props) => ({
   width: '100%',
@@ -34,5 +34,7 @@ export const Flex = (inProps: FlexProps) => {
 };
 
 Flex.Item = styled.div<FlexItemProps>((props) => ({
-  width: '100%',
+  flexGrow: props.grow || 0,
+  flexShrink: props.shrink || 1,
+  basis: props.basis || 'auto',
 }));

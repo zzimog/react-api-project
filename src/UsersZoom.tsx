@@ -90,7 +90,10 @@ export const UsersZoom = () => {
     <>
       {formState?.open && (
         <Modal open={formState.open} onClose={handleModalClose}>
-          <UsersForm id={formState.id} onSave={handleFormSave} />
+          <UsersForm
+            id={formState.id}
+            onSave={handleFormSave}
+          />
         </Modal>
       )}
 

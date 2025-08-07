@@ -24,6 +24,7 @@ const ButtonRoot = styled.button<ButtonProps>`
   background: ${theme.colors.primary};
   overflow: hidden;
   cursor: pointer;
+  opacity: ${(p) => (p.disabled && 0.5)};
 `;
 
 export const Button = (inProps: ButtonProps) => {
