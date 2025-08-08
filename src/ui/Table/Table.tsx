@@ -1,3 +1,4 @@
+import { type ReactNode } from 'react';
 import { Button } from '../Button/Button';
 
 export type TableRow = {
@@ -43,7 +44,7 @@ export const Table = (inProps: TableProps) => {
                   value = <pre>{JSON.stringify(value, null, '  ')}</pre>;
                 }
 
-                return <td key={index}>{value}</td>;
+                return <td key={index}>{value as ReactNode}</td>;
               })}
               {actions.map((action, index) => {
                 return (

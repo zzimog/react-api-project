@@ -1,4 +1,4 @@
-import { type ChangeEvent, useState } from 'react';
+import { type ChangeEvent, useEffect, useState } from 'react';
 import { Flex, Button, Text } from '@/ui';
 import { useFetch } from '@/utils';
 
@@ -17,10 +17,13 @@ function useForm<T>(endpoint: string, id?: string | number, initialData?: T) {
   const { data, ...fetch } = useFetch<T>({
     url: `${endpoint}/${id}?sleep=2`,
     enabled: id ? true : false,
-    initialData,
   });
 
-  const [formData, setFormData] = useState<T | undefined>(data);
+  const [formData, setFormData] = useState<T | undefined>(initialData);
+
+  useEffect(() => {
+    setFormData(data);
+  }, [data]);
 
   return {
     formData,
